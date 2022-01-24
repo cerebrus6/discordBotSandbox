@@ -1,0 +1,28 @@
+{
+  "name": "testbot",
+  "version": "1.0.0",
+  "description": "Hello world to discord bots",
+  "main": "index.js",
+  "scripts": {
+    "test": "start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cerebrus6/discordBotSandbox.git"
+  },
+  "keywords": [
+    "discord",
+    "bot"
+  ],
+  "author": "cerebrus6",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cerebrus6/discordBotSandbox/issues"
+  },
+  "homepage": "https://github.com/cerebrus6/discordBotSandbox#readme",
+  "dependencies": {
+    "discord.js": "^13.2.0",
+    "axios": "^0.24.0",
+    "dotenv": "^10.0.0"
+  }
+}
