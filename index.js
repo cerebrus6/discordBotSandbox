@@ -26,6 +26,7 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
+// Every module has a corresponding bot command that starts with !
 let modules = {
 	r: "",
 	rng: require("./cerebrus6/rng.js"),
