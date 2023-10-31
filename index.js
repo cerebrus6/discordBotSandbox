@@ -1,96 +1,146 @@
-// Requires
-require("dotenv").config();
-const Discord = require("discord.js");
-const axios = require("axios");
-const cerebrus6 = require("./cerebrus6/link.js");
-const mysql = require("mysql2/promise");
-// const bluebird = require("bluebird");
+async function main() {
+	// Requires
+	require("dotenv").config();
 
-// Create Client
-const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] }, function(error));
+	/////////////////////////////////////////////////////////////////////////////////
+	// Connect to Discord
+	const Discord = require("discord.js");
+	const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
+	const common = require("./core/common.js");
+	client.login(process.env.CLIENT_TOKEN);	// Login using the Client Token provided by Discord
+	/////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////////
-// To enable consecutive axios get requests line
-// const https = require("https");
-// axios.defaults.httpsAgent = new https.Agent({ keepAlive: true });
-// (async function() {
-// axios.defaults.timeout = 30000;
-// 	// let x = await axiosGetRequest('https://meme-api.herokuapp.com/gimme');
-// 	// console.log(x.data.url);
-// 	// let y = await axiosGetRequest('https://meme-api.herokuapp.com/gimme');		
-// 	// console.log(y.data.url);
-// }());
-/////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////
+	// Establish database connection
+	const database_connection = require('./core/database_connection.js');
+	const db = new database_connection();
+	/////////////////////////////////////////////////////////////////////////////////
 
-client.on('ready', () => {
-	console.log(`Logged in as ${client.user.tag}!`);
-});
+	/////////////////////////////////////////////////////////////////////////////////
+	// Import bot commands
+	const axios = require("axios");
+	const cerebrus6 = require("./cerebrus6/link.js");
+	/////////////////////////////////////////////////////////////////////////////////
 
-// Every module has a corresponding bot command that starts with !
-let modules = {
-	r: "",
-	rng: require("./cerebrus6/rng.js"),
-	safeBet: require("./cerebrus6/safeBet.js"),
-	meme: require("./cerebrus6/meme.js"),
-	headline: require("./cerebrus6/headline.js")
-}
+	var sql, binds, res, where, values, user;
 
-client.on('messageCreate', async msg => {
-	let message = msg.content.split(" ");
-	// msg.reply('reply');
-	let commands = ["!meme", "!getHeadline", "!rng", "!r", "!headline", "!safeBet"];
-	if(commands.includes(message[0])) {
-		let chosenModule = message[0].replace("!", "");
-		let arr = message.slice(1);
-		if(chosenModule != "r") {
-			modules.r = chosenModule;
-			await updateVar("r", chosenModule);
-		} else {
-			modules.r = await getVar("r");			
-		}
-		modules[modules.r].call(this, msg, ...arr);
+	/////////////////////////////////////////////////////////////////////////////////
+	// To enable consecutive axios get requests line
+	// const https = require("https");
+	// axios.defaults.httpsAgent = new https.Agent({ keepAlive: true });
+	// (async function() {
+	// axios.defaults.timeout = 30000;
+	// 	// let x = await axiosGetRequest('https://meme-api.herokuapp.com/gimme');
+	// 	// console.log(x.data.url);
+	// 	// let y = await axiosGetRequest('https://meme-api.herokuapp.com/gimme');		
+	// 	// console.log(y.data.url);
+	// }());
+	/////////////////////////////////////////////////////////////////////////////////
+
+	// Example usage
+
+	client.on('ready', () => {
+		// console.log(client.user);
+		console.log(`Logged in as ${client.user.tag}!`);
+	});
+
+	// Every module has a corresponding bot command that starts with !
+	let modules = {
+		r: "",
+		rng: require("./cerebrus6/rng.js"),
+		safeBet: require("./cerebrus6/safeBet.js"),
+		meme: require("./cerebrus6/meme.js"),
+		person: require("./cerebrus6/person.js"),
+		headline: require("./cerebrus6/headline.js")
 	}
-});
 
-// Login using the Client Token provided by Discord
-client.login(process.env.CLIENT_TOKEN);
+	client.on('messageCreate', async msg => {
+		let message = msg.content.split(" ");
 
-// name = Unique Key, content = Content
-// The main table is composed only of two collumns (varName, varContent)
-// Both collumns are composed of strings
-async function updateVar(name, content) {
-	// Connect to Database
-	const connection = await mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: "",
-		database: "discordbot"
-	})
+		where = {
+			'id =': msg.author.id,
+			'username =': msg.author.username,
+			'is_deleted =': 0
+		}
 
-	// Execute query
-	connection.execute("UPDATE main SET varContent = ? WHERE varName LIKE ?", [content, name]);
+		console.log(msg.author);
 
-	// End connection
-	await connection.end();
+		// Add user in database if it doesn't exist
+		user = await db.select('user_account', '' , where, null) ?? [];
+		if(user.length === 0) {
+			values = {
+				'id': msg.author.id,
+				'username': msg.author.username,
+				'avatar': msg.author.avatar,
+				'avatar_url': 'https://cdn.discordapp.com/avatars/' + msg.author.id +'/' + msg.author.avatar + '.png',
+				'added_by': msg.author.id,
+				'added_on': common.currentDateTime(),
+			}
+
+			await db.insert("user_account", values);
+		}
+
+		let commands = ["!meme", "!getHeadline", "!rng", "!r", "!headline", "!safeBet", "!person"];
+
+		if(commands.includes(message[0])) {
+			let chosen_module = message[0].replace("!", "");
+
+			let arr = message.slice(1) ?? [];
+			if(chosen_module != "r") {
+				modules.r = chosen_module;
+				where = {
+					'name =': 'r'
+				}
+
+				values = {
+					'value': modules.r,
+					// 'params': arr.join(','),
+					'updated_by': msg.author.id,
+					'updated_on': common.currentDateTime(),
+				}
+				await db.update("main", where, values);
+			} else {
+				where = {
+					'is_deleted =': 0
+				}
+				let r = await db.select('command_history', '', where, 'id DESC', 1);
+				modules.r = r.command;
+				arr = r.params ? r.params.split(',') : [];
+			}
+
+			values = {
+				'command': modules.r,
+				'params': arr.join(','),
+				'added_by': msg.author.id,
+				'added_on': common.currentDateTime(),
+			}
+
+			await db.insert("command_history", values);
+			modules[modules.r].call(this, msg, ...arr);
+		}
+	});	
 }
 
-// Asynchronously get data from the main table of the database
-async function getVar(name) {
-	// Connect to database
-	const connection = await mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: "",
-		database: "discordbot"
-		// Promise: bluebird
-	})
+try {
+	main();
+	// Write errors to file
+} catch (error) {
+    const fs = require('fs');
+    const logDirectory = '../logs';
 
-	// Execute query
-	const [rows, fields] = await connection.execute("SELECT * FROM main WHERE varName = ?", [name]);
+    if (!fs.existsSync(logDirectory)) {
+        fs.mkdirSync(logDirectory);
+    }
 
-	// End Connection
-	await connection.end();
+    const currentDate = new Date().toISOString().split('T')[0];
+    const timestamp = new Date().toLocaleString();
+    const logMessage = `${timestamp}: ${error}\n`;
 
-	// Return content
-	return rows[0].varContent;
+    const logFileName = `${logDirectory}/error_${currentDate}.log`;
+
+    fs.appendFile(logFileName, logMessage, (err) => {
+        if (err) {
+            console.error('Error writing to log file: ' + err);
+        }
+    });
 }

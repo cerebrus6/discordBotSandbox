@@ -1,8 +1,8 @@
 const axios = require("axios");
 
 async function meme(msg) {
+	const img = await axiosGetRequest('https://meme-api.com/gimme');
 	msg.channel.send("Here's your meme!");
-	const img = await axiosGetRequest('https://meme-api.herokuapp.com/gimme');
 	msg.channel.send(img.data.url);	
 }
 
