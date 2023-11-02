@@ -1,5 +1,8 @@
+// Load environment variables
+const dotenv = require('dotenv');
+dotenv.config({ path: dotenv.config({ path: './.env' }).error ? '../.env' : './.env' });
+
 // Requires
-require("dotenv").config();
 const Discord = require("discord.js");
 const axios = require("axios");
 const cerebrus6 = require("./cerebrus6/link.js");
@@ -35,21 +38,23 @@ let modules = {
 	safeBet: require("./cerebrus6/safeBet.js"),
 	meme: require("./cerebrus6/meme.js"),
 	person: require("./cerebrus6/person.js"),
-	headline: require("./cerebrus6/headline.js")
+	headline: require("./cerebrus6/headline.js"),
+	todo: require("./cerebrus6/todo.js"),
 }
 
 client.on('messageCreate', async msg => {
 	let message = msg.content.split(" ");
 
-	let commands = ["!meme", "!getHeadline", "!rng", "!r", "!headline", "!safeBet", "!person"];
+	let commands = ["!meme", "!getHeadline", "!rng", "!r", "!headline", "!safeBet", "!person", "!todo"];
 	if(commands.includes(message[0])) {
 		let chosenModule = message[0].replace("!", "");
 		let arr = message.slice(1);
 		if(chosenModule != "r") {
 			modules.r = chosenModule;
-			await updateVar("r", chosenModule);
+			// await updateVar("r", chosenModule);
 		} else {
-			modules.r = await getVar("r");			
+			// Get the latest command
+			// modules.r = await getVar("r");			
 		}
 		modules[modules.r].call(this, msg, ...arr);
 	}
@@ -57,43 +62,3 @@ client.on('messageCreate', async msg => {
 
 // Login using the Client Token provided by Discord
 client.login(process.env.CLIENT_TOKEN);
-
-// name = Unique Key, content = Content
-// The main table is composed only of two collumns (varName, varContent)
-// Both collumns are composed of strings
-async function updateVar(name, content) {
-	// Connect to Database
-	const connection = await mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: "",
-		database: "discordbot"
-	})
-
-	// Execute query
-	connection.execute("UPDATE main SET varContent = ? WHERE varName LIKE ?", [content, name]);
-
-	// End connection
-	await connection.end();
-}
-
-// Asynchronously get data from the main table of the database
-async function getVar(name) {
-	// Connect to database
-	const connection = await mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: "",
-		database: "discordbot"
-		// Promise: bluebird
-	})
-
-	// Execute query
-	const [rows, fields] = await connection.execute("SELECT * FROM main WHERE varName = ?", [name]);
-
-	// End Connection
-	await connection.end();
-
-	// Return content
-	return rows[0].varContent;
-}
