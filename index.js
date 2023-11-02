@@ -6,8 +6,11 @@ dotenv.config({ path: dotenv.config({ path: './.env' }).error ? '../.env' : './.
 const Discord = require("discord.js");
 const axios = require("axios");
 const cerebrus6 = require("./cerebrus6/link.js");
-const mysql = require("mysql2/promise");
+const database_connection = require("./core/database_connection.js");
+// const mysql = require("mysql2/promise");
 // const bluebird = require("bluebird");
+
+const db = new database_connection();
 
 // Create Client
 // const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] }, function(error));
@@ -42,23 +45,42 @@ let modules = {
 	todo: require("./cerebrus6/todo.js"),
 }
 
+var user_id = null;
+
 client.on('messageCreate', async msg => {
+	user_id = msg.author.id;
 	let message = msg.content.split(" ");
 
-	let commands = ["!meme", "!getHeadline", "!rng", "!r", "!headline", "!safeBet", "!person", "!todo"];
+	let commands = ["!meme", "!getHeadline", "!rng", "!headline", "!safeBet", "!person", "!todo"];
 	if(commands.includes(message[0])) {
-		let chosenModule = message[0].replace("!", "");
-		let arr = message.slice(1);
-		if(chosenModule != "r") {
-			modules.r = chosenModule;
-			// await updateVar("r", chosenModule);
-		} else {
-			// Get the latest command
-			// modules.r = await getVar("r");			
-		}
-		modules[modules.r].call(this, msg, ...arr);
+		let [command, params] = await processCommand(message);
+
+		modules[command].call(this, msg, ...params);
 	}
 });
+
+async function processCommand(message = ["!r"]) {
+	let command = message[0].replace("!", "");
+	let params = message.slice(1);
+
+	let values = {
+		'command': command,
+		'params': params.join(','),
+		'added_by': user_id,
+		'added_on': new Date().toISOString().replace('T', ' ').slice(0, 19)
+	}
+
+	await db.insert('command_history', values);
+
+	// if(command != "r") {
+	// 	await updateVar("r", chosen_module);
+	// } else {
+	// 	// Get the latest command
+	// 	command = await getVar("r");
+	// }
+
+	return [command, params];
+}
 
 // Login using the Client Token provided by Discord
 client.login(process.env.CLIENT_TOKEN);

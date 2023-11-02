@@ -1,6 +1,8 @@
 const dotenv = require('dotenv');
 dotenv.config({ path: dotenv.config({ path: './.env' }).error ? '../.env' : './.env' });
 
+// You can generate your trello API key and token here
+// https://trello.com/power-ups/admin
 const axios = require('axios');
 const api_key = process.env.TRELLO_API_KEY;
 const api_token = process.env.TRELLO_API_TOKEN;
