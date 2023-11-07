@@ -2,6 +2,8 @@ class cerebrus6Core {
   constructor() {
     const dotenv = require('dotenv');
     dotenv.config({ path: dotenv.config({ path: './.env' }).error ? '../.env' : './.env' });
+    const database_connection = require("./database_connection.js");
+    this.db = new database_connection();
   }
 
   sayHello() {
@@ -32,7 +34,6 @@ class cerebrus6Core {
   currentDateTime() {
     return new Date().toISOString().slice(0, 19).replace('T', ' ');
   }
-
 }
 
 module.exports = cerebrus6Core;

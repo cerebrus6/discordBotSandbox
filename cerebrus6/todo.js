@@ -12,7 +12,7 @@ const {
 var boards = [], lists = [], cards = [];
 var board, list, card, res;
 
-async function todo(msg, command, ...params) {
+async function todo(msg, command = 'list') {
 	console.time("get_data");
 	await get_data();
 	console.timeEnd("get_data");

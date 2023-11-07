@@ -55,6 +55,29 @@ class database_connection {
     // return res;
   }
 
+  async backup() {
+    // Generate a timestamp for the backup file name
+    const timestamp = new Date().toISOString().replace(/[-:]/g, '');
+
+    // Formulate the backup file name with the timestamp
+    const backupFile = `backup_${timestamp}.dump`;
+
+    // Connect to the database
+    const db = await this.connection.connect();
+
+    // Backup the database
+    try {
+      const backupResult = await db.query(`pg_dump -h ${this.connection.options.host} -U ${this.connection.options.user} -d ${this.connection.options.database} -F c > ${backupFile}`);
+      console.log("Database backup completed.");
+      return true;
+    } catch (error) {
+      console.error("Database backup error:", error);
+      return false;
+    } finally {
+      db.release();
+    }
+  }
+
   async update(table, where, values) {
     // Connect to database
 

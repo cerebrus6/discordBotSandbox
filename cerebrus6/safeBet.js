@@ -1,4 +1,4 @@
-async function safeBet(msg, amount=0, tries=0) {
+async function safeBet(msg, amount = 0, tries = 0) {
 	let safeBet = parseInt(amount.toString().replace(/,/g, ""));
 	let divisor = 0;
 	for(let i = 0; i < tries; i++) {

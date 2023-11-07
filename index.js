@@ -36,13 +36,39 @@ client.on('ready', () => {
 
 // Every module has a corresponding bot command that starts with !
 let modules = {
-	r: "",
+	// r: "",
 	rng: require("./cerebrus6/rng.js"),
 	safeBet: require("./cerebrus6/safeBet.js"),
 	meme: require("./cerebrus6/meme.js"),
 	person: require("./cerebrus6/person.js"),
+	cat: require("./cerebrus6/cat.js"),
+	waifu: require("./cerebrus6/waifu.js"),
 	headline: require("./cerebrus6/headline.js"),
 	todo: require("./cerebrus6/todo.js"),
+	tini: require("./cerebrus6/tini.js"),
+	fantasy: require("./cerebrus6/fantasy.js"),
+	snack: require("./cerebrus6/snack.js"),
+	joke: require("./cerebrus6/joke.js"),
+	help: help,
+}
+
+function help(msg, command = null) {
+	if(!command) {
+		let guide_message = `\`\`\`Commands [Parameters]\`\`\``;
+
+		for (const [command, function_obj] of Object.entries(modules)) {
+			const fnString = function_obj.toString();
+			const parameterNames = fnString
+				.slice(fnString.indexOf('(') + 1, fnString.indexOf(')'))
+				.split(', ')
+				.filter(Boolean);
+			parameterNames ? parameterNames.shift() : [];
+			guide_message += `\`\`\`!${command} [${parameterNames.join('] [')}]\`\`\``
+		}
+		guide_message += `\nTo have details of a specific command, just input \`!help [command_name]\`\n`
+		guide_message += `Note: Ignore the square brackets when typing the parameters.`
+		msg.channel.send(guide_message);		
+	}
 }
 
 var user_id = null;
@@ -51,11 +77,13 @@ client.on('messageCreate', async msg => {
 	user_id = msg.author.id;
 	let message = msg.content.split(" ");
 
-	let commands = ["!meme", "!getHeadline", "!rng", "!headline", "!safeBet", "!person", "!todo"];
+	// let commands = ["!meme", "!getHeadline", "!rng", "!headline", "!safeBet", "!person", "!todo", "!tini"];
+	let commands = Object.keys(modules).map(key => `!${key}`);
+	
 	if(commands.includes(message[0])) {
 		let [command, params] = await processCommand(message);
 
-		modules[command].call(this, msg, ...params);
+		modules[command] ? modules[command].call(this, msg, ...params) : msg.channel.send("Invalid Command");
 	}
 });
 
