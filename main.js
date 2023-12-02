@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 try {
-  const bot = require('./index_classified.js');
+  const bot = require('./index.js');
 
   // Code that may throw an error
   // For example, you can intentionally throw an error for demonstration purposes:
