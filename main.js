@@ -7,7 +7,6 @@ try {
   // Code that may throw an error
   // For example, you can intentionally throw an error for demonstration purposes:
   const app = new bot;
-  console.log(asd);
   app.start();
 
 } catch (error) {
