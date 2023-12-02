@@ -20,4 +20,5 @@ async function waifu(msg) {
 //     return response;
 // }
 
-module.exports = waifu;
+// module.exports = waifu;
+export default waifu;

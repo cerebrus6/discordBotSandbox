@@ -1,9 +1,9 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config({ path: dotenv.config({ path: './.env' }).error ? '../.env' : './.env' });
 
 // You can generate your trello API key and token here
 // https://trello.com/power-ups/admin
-const axios = require('axios');
+import axios from 'axios';
 const api_key = process.env.TRELLO_API_KEY;
 const api_token = process.env.TRELLO_API_TOKEN;
 
@@ -52,10 +52,24 @@ async function closeCard(card_id = null) {
 	  return response;
 }
 
-module.exports = {
+// module.exports = {
+// 	getCardsForList,
+// 	getListsForBoard,
+// 	getBoardsForUser,
+// 	getCardsForUser,
+// 	closeCard
+// }
+
+export default {
 	getCardsForList,
 	getListsForBoard,
 	getBoardsForUser,
 	getCardsForUser,
 	closeCard
 }
+
+// export {getCardsForList}; // Define getCardsForList function here
+// export {getListsForBoard}; // Define getListsForBoard function here
+// export {getBoardsForUser}; // Define getBoardsForUser function here
+// export {getCardsForUser}; // Define getCardsForUser function here
+// export {closeCard}; // Define closeCard function here

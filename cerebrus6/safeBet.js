@@ -12,4 +12,5 @@ async function safeBet(msg, amount = 0, tries = 0) {
 	msg.channel.send("Safe Bet = " + Math.floor(safeBet));
 }
 
-module.exports = safeBet;
+// module.exports = safeBet;
+export default safeBet;

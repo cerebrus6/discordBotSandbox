@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 
 async function headline(msg) {
 	let url = "https://newsapi.org/v2/top-headlines?country=ph&apiKey=135bcd2ec68745cd928deac1550acb0b";
@@ -18,4 +18,5 @@ async function getData(url) {
 	}
 }
 
-module.exports = headline;
+// module.exports = headline;
+export default headline;

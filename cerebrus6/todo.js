@@ -1,13 +1,23 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config({ path: dotenv.config({ path: './.env' }).error ? '../.env' : './.env' });
 
-const {	
-	getCardsForList,
-	getListsForBoard,
-	getBoardsForUser,
-	getCardsForUser,
-	closeCard
-} = require('./trello.js');
+// const {	
+// 	getCardsForList,
+// 	getListsForBoard,
+// 	getBoardsForUser,
+// 	getCardsForUser,
+// 	closeCard
+// } = require('./trello.js');
+
+import trelloModule from './trello.js';
+
+const {
+  getCardsForList,
+  getListsForBoard,
+  getBoardsForUser,
+  getCardsForUser,
+  closeCard
+} = trelloModule;
 
 var boards = [], lists = [], cards = [];
 var board, list, card, res;
@@ -112,6 +122,7 @@ function isStringInProperty(arr, str, property) {
   return arr.some(obj => obj[property] === str);
 }
 
-module.exports = todo;
+// module.exports = todo;
+export default todo;
 
 // todo('list');

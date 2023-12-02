@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 
 async function joke(msg) {
 	const headers = {
@@ -17,4 +17,5 @@ async function axiosGetRequest(url, headers) {
     return response;
 }
 
-module.exports = joke;
+// module.exports = joke;
+export default joke;

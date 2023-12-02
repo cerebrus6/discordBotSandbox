@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 
 // This uses a webcrawler strategy
 // First we get the html page
@@ -54,4 +54,5 @@ async function axiosGetRequest(url) {
     return response;
 }
 
-module.exports = snack;
+// module.exports = snack;
+export default snack;

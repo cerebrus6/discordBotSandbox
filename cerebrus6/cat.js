@@ -22,4 +22,5 @@ async function cat(msg) {
 //     return response;
 // }
 
-module.exports = cat;
+// module.exports = cat;
+export default cat;

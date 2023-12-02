@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 
 async function meme(msg) {
 	const img = await axiosGetRequest('https://meme-api.com/gimme');
@@ -11,4 +11,5 @@ async function axiosGetRequest(url) {
     return response;
 }
 
-module.exports = meme;
+// module.exports = meme;
+export default meme;

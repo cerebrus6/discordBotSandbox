@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 
 async function person(msg) {
 	msg.channel.send("Here's your person!");
@@ -13,4 +13,5 @@ async function axiosGetRequest(url) {
     return response;
 }
 
-module.exports = person;
+// module.exports = person;
+export default person;

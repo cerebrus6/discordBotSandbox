@@ -1,5 +1,5 @@
-const axios = require("axios");
-const dotenv = require('dotenv');
+import axios from "axios";
+import dotenv from 'dotenv';
 dotenv.config({ path: dotenv.config({ path: './.env' }).error ? '../.env' : './.env' });
 
 async function tini(msg, command = null, url = null, alias = null) {
@@ -132,4 +132,5 @@ async function axiosPostRequest(url, form_data, headers = null) {
     return response;
 }
 
-module.exports = tini;
+// module.exports = tini;
+export default tini;

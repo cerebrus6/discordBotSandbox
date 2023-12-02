@@ -1,21 +1,5 @@
-import Discord from "discord.js";
-// const Core = require("discord.js");
-import Core from 'cerebrus6core';
-// const Core = require('@core');
-
-// Modules
-import * as rng from "./cerebrus6/rng.js";
-import * as safeBet from "./cerebrus6/safeBet.js";
-import * as meme from "./cerebrus6/meme.js";
-import * as person from "./cerebrus6/person.js";
-import * as cat from "./cerebrus6/cat.js";
-import * as waifu from "./cerebrus6/waifu.js";
-import * as headline from "./cerebrus6/headline.js";
-import * as todo from "./cerebrus6/todo.js";
-import * as tini from "./cerebrus6/tini.js";
-import * as fantasy from "./cerebrus6/fantasy.js";
-import * as snack from "./cerebrus6/snack.js";
-import * as joke from "./cerebrus6/joke.js";
+const Discord = require("discord.js");
+const Core = require("../core/core.js");
 
 class Bot extends Core {
 	constructor() {
@@ -23,18 +7,18 @@ class Bot extends Core {
 
 		this.client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 		this.modules = {
-			rng: rng,
-			safeBet: safeBet,
-			meme: meme,
-			person: person,
-			cat: cat,
-			waifu: waifu,
-			headline: headline,
-			todo: todo,
-			tini: tini,
-			fantasy: fantasy,
-			snack: snack,
-			joke: joke,
+			rng: require("./cerebrus6/rng.js"),
+			safeBet: require("./cerebrus6/safeBet.js"),
+			meme: require("./cerebrus6/meme.js"),
+			person: require("./cerebrus6/person.js"),
+			cat: require("./cerebrus6/cat.js"),
+			waifu: require("./cerebrus6/waifu.js"),
+			headline: require("./cerebrus6/headline.js"),
+			todo: require("./cerebrus6/todo.js"),
+			tini: require("./cerebrus6/tini.js"),
+			fantasy: require("./cerebrus6/fantasy.js"),
+			snack: require("./cerebrus6/snack.js"),
+			joke: require("./cerebrus6/joke.js"),
 			help: this.help
 		};
 	}
@@ -93,10 +77,7 @@ class Bot extends Core {
 		await this.db.insert('command_history', values);
 
 		if (this.modules[command]) {
-			// console.log(this.modules[command]);
-			// this.modules[command].call(this, msg, ...params);
-
-			this.modules[command].default.call(this, msg, ...params);
+			this.modules[command].call(this, msg, ...params);
 		} else {
 			msg.channel.send("Invalid Command");
 		}
@@ -107,5 +88,4 @@ class Bot extends Core {
 
 // const bot = new Bot();
 // bot.start();
-// module.exports = Bot;
-export default Bot;
+module.exports = Bot;

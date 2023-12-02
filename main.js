@@ -1,9 +1,8 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import bot from './index.js';
 
 try {
-  const bot = require('./index.js');
-
   // Code that may throw an error
   // For example, you can intentionally throw an error for demonstration purposes:
   const app = new bot;

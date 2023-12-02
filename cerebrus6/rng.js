@@ -5,4 +5,5 @@ async function rng(msg, min = 1, max = 100) {
 		await msg.channel.send(`${Math.floor(Math.random() * parseInt(max - min)) + parseInt(min)}`)
 }
 
-module.exports = rng;
+// module.exports = rng;
+export default rng;
