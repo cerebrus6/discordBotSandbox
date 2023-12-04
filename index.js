@@ -90,7 +90,7 @@ class Bot extends Core {
 			'added_on': new Date().toISOString().replace('T', ' ').slice(0, 19)
 		};
 
-		await this.db.insert('command_history', values);
+		// await this.db.insert('command_history', values);
 
 		if (this.modules[command]) {
 			// console.log(this.modules[command]);

@@ -26,12 +26,14 @@ async function todo(msg, command = 'list') {
 	console.time("get_data");
 	await get_data();
 	console.timeEnd("get_data");
+
+	// Apply your filter conditions here
 	const filters = [
 	  // obj => obj.id === '622af625f474f58acc93e614',
 	  obj => {
 	  	board = boards.find(board => board.id === obj.idBoard);
 	    // You can perform multiple checks or operations here
-	    return board.name === 'Project 1';
+	    return board.name === 'test_board';
 	  },
 	];
 
@@ -39,7 +41,12 @@ async function todo(msg, command = 'list') {
 
 	for(let i = 0; i < data.length; i++) {
 		console.log(is_done(data[i]))
+		board = boards.find(board => board.id === data[i].idBoard);
+		list = lists.find(list => list.id === data[i].idList);
+		data[i].board = board;
+		data[i].list = list;
 	}
+
 	// await closeCard('653cf873774e28cdcd8a644c');
 	// console.log(data[0].labels)
 	// console.log(data.length);
@@ -53,19 +60,23 @@ async function todo(msg, command = 'list') {
 // Make card details human readable, filter out useless data
 function present_cards(msg, data) {
 	res = `\`\`\`Tasks\`\`\`\n`;
+	console.log(data[0].badges.attachmentsByType.trello);
+	res += `===============================================================\n`
 	for(let i = 0; i < data.length; i++) {
-		res += ` - [${data[i].name}](${data[i].shortUrl})`
+		res += ` -  ${data[i].board.name}: ${data[i].list.name} [${data[i].name}](${data[i].shortUrl})`
 
 		let labels = data[i].labels ?? []
 		for(let j = 0; j < labels.length; j++) {
 			res += ` [\`${labels[j].name}\`]`
 		}
 		if(data[i].desc) {
-			res += `: \`${data[i].desc}\``			
+			res += `: \n\`${data[i].desc}\``			
 		}
 		res += `\n`
+		res += `===============================================================\n`
 	}
 	msg.channel.send(res);
+
 	return res;
 }
 
@@ -102,6 +113,7 @@ function filter_data(data, filters = []) {
 	}
 	// return data.filter(obj => customConditions.some(condition => condition(obj)));
 
+	let counter = 0;
 	let filtered_data = data.filter(obj => {
 		if(filters.length === 0) {
 			return true;
