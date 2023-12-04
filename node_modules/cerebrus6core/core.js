@@ -2,8 +2,8 @@ class cerebrus6Core {
   constructor() {
     const dotenv = require('dotenv');
     dotenv.config({ path: dotenv.config({ path: './.env' }).error ? '../.env' : './.env' });
-    const database_connection = require("./database_connection.js");
-    this.db = new database_connection();
+    const db = require("./db.js");
+    this.db = new db();
   }
 
   sayHello() {

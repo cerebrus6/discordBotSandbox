@@ -1,8 +1,9 @@
-const { Pool } = require("pg");
-const common = require("./common.js");
+import pg from 'pg';
+const { Pool } = pg;
+
 var sql, binds, res;
 
-class database_connection {
+class db {
   constructor() {
     this.connection = new Pool({
       host: "db.kwnjplywneufccyzxocs.supabase.co",
@@ -16,7 +17,7 @@ class database_connection {
   async select(table = null, fields = null, where = [], order = null, limit = null) {
     // Connect to database
 
-      const db = await this.connection.connect();
+      const db_connection = await this.connection.connect();
     // Execute query
 
     if(fields === '') {
@@ -43,10 +44,8 @@ class database_connection {
       sql += ` LIMIT ${limit}`
     }
 
-    // console.log(sql);
-
-    res = await db.query(sql);
-    db.release();
+    res = await db_connection.query(sql);
+    db_connection.release();
       if (limit === 1) {
         return res.rows.length > 0 ? res.rows[0] : [];
       } else {
@@ -63,25 +62,25 @@ class database_connection {
     const backupFile = `backup_${timestamp}.dump`;
 
     // Connect to the database
-    const db = await this.connection.connect();
+    const db_connection = await this.connection.connect();
 
     // Backup the database
     try {
-      const backupResult = await db.query(`pg_dump -h ${this.connection.options.host} -U ${this.connection.options.user} -d ${this.connection.options.database} -F c > ${backupFile}`);
+      const backupResult = await db_connection.query(`pg_dump -h ${this.connection.options.host} -U ${this.connection.options.user} -d ${this.connection.options.database} -F c > ${backupFile}`);
       console.log("Database backup completed.");
       return true;
     } catch (error) {
       console.error("Database backup error:", error);
       return false;
     } finally {
-      db.release();
+      db_connection.release();
     }
   }
 
   async update(table, where, values) {
     // Connect to database
 
-      const db = await this.connection.connect();
+      const db_connection = await this.connection.connect();
     // Execute query
 
     if(where.length === 0) {
@@ -95,7 +94,6 @@ class database_connection {
     if(values.length === 0) {
       return false;
     } else {
-      // console.log(values);
       values = 'SET ' + Object.entries(values)
                         .map(([key, value]) => `${key} = '${String(value).replace("'",'\'').replace('"','\"')}'`)
                         .join(', ');
@@ -105,10 +103,8 @@ class database_connection {
         ${values} 
         ${where}`;
 
-    // console.log(sql);
-
-    res = await db.query(sql);
-    db.release();
+    res = await db_connection.query(sql);
+    db_connection.release();
     if (res.rowCount > 0) {
       // At least one row was updated, so return true
       return true;
@@ -119,43 +115,35 @@ class database_connection {
   }
 
   async insert(table, values) {
-    // Connect to database
+    if(!values || !table)
+      return false;
 
-      const db = await this.connection.connect();
-    // Execute query
+    const db_connection = await this.connection.connect();
 
     let fields = "";
-    if(values.length === 0) {
-      return false;
-    } else {
-      fields = '(' + Object.entries(values)
-              .map(([key, value]) => `${key}`)
-              .join(', ') + ')';
-    }
+    fields = '(' + Object.entries(values)
+            .map(([key, value]) => `${key}`)
+            .join(', ') + ')';
 
-    if(values.length === 0) {
-      return false;
-    } else {
-      // console.log(values);
-      values = 'VALUES (' + Object.entries(values)
-                        .map(([key, value]) => `'${String(value).replace("'",'\'').replace('"','\"')}'`)
-                        .join(', ') + ')';
-    }
+    values = 'VALUES (' + Object.entries(values)
+                      .map(([key, value]) => `'${String(value).replace("'",'\'').replace('"','\"')}'`)
+                      .join(', ') + ')';
 
     sql = `INSERT INTO ${table}
         ${fields}
-        ${values}`;
+        ${values}
+         RETURNING *`;
 
-    console.log(sql);
+    // console.log(sql);
 
-    res = await db.query(sql);
-    db.release();
+    res = await db_connection.query(sql);
+    db_connection.release();
+
     if (res.rows.length > 0) {
-        // At least one row was inserted, so return the ID
-        return res.rows[0];
+      console.log(res.rows[0]);
+      return res.rows[0];
     } else {
-        // No rows were inserted, so return false
-        return false;
+      return false;
     }
   }
 
@@ -183,19 +171,29 @@ class database_connection {
       binds.push(offset);
     }
 
-    const db = await this.connection.connect();
+    const db_connection = await this.connection.connect();
 
     try {
-      const result = await db.query(sql, binds);
-      db.release();
+      const result = await db_connection.query(sql, binds);
+      db_connection.release();
       return result.rows;
     } catch (error) {
       console.error("Error executing query:", error);
       return false;
     } finally {
-      db.release();
+      db_connection.release();
     }
   }
 }
 
-module.exports = database_connection;
+// module.exports = db;
+export default db;
+let database_connection = new db();
+let val = {
+  'name': 'hey',
+  'value': 'hoy',
+  'added_by': '1',
+  'added_on': '2023-10-28 00:19:08'
+}
+
+database_connection.insert('main', val);
