@@ -60,7 +60,7 @@ async function todo(msg, command = 'list') {
 // Make card details human readable, filter out useless data
 function present_cards(msg, data) {
 	res = `\`\`\`Tasks\`\`\`\n`;
-	console.log(data[0].badges.attachmentsByType.trello);
+	// console.log(data[0].badges.attachmentsByType.trello);
 	res += `===============================================================\n`
 	for(let i = 0; i < data.length; i++) {
 		res += ` -  ${data[i].board.name}: ${data[i].list.name} [${data[i].name}](${data[i].shortUrl})`

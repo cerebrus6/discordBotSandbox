@@ -70,6 +70,7 @@ class Bot extends Core {
 
 		this.client.on('messageCreate', async msg => {
 			const user_id = msg.author.id;
+			console.log(msg.author)
 			const message = msg.content.split(" ");
 			const commands = Object.keys(this.modules).map(key => `!${key}`);
 
