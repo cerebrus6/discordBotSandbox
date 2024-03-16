@@ -6,11 +6,16 @@ async function safeBet(msg, amount = 0, tries = 0) {
 	}
 	safeBet = safeBet/divisor;
 	for(let i = 0; i < tries; i++) {
-		msg.channel.send("Round " + (i + 1) + " = " + Math.floor(safeBet*Math.pow(2, i)));
+		console.log("Round " + (i + 1) + " = " + Math.floor(safeBet*Math.pow(2, i)));
+		msg?.channel?.send("Round " + (i + 1) + " = " + Math.floor(safeBet*Math.pow(2, i)));
 	}
-	msg.channel.send("Chance of Winning = " + (100 - (1/Math.pow(2,tries)*100)) + "%");
-	msg.channel.send("Safe Bet = " + Math.floor(safeBet));
+
+	console.log("Chance of Winning = " + (100 - (1/Math.pow(2,tries)*100)) + "%");
+	console.log("Safe Bet = " + Math.floor(safeBet));
+	msg?.channel?.send("Chance of Winning = " + (100 - (1/Math.pow(2,tries)*100)) + "%");
+	msg?.channel?.send("Safe Bet = " + Math.floor(safeBet));
 }
 
 // module.exports = safeBet;
 export default safeBet;
+safeBet(null, 64000000, 6);

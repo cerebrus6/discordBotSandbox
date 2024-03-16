@@ -1,4 +1,6 @@
-let input = require("./asynchronousInput.js")
+// let input = require("./asynchronousInput.js")
+import input from "./asynchronousInput.js";
+
 
 async function rr() {
 	let inputs = await input("(NumOfRounds, Repeat, Stats, Print, certainValue, safeBet)> ");
@@ -82,4 +84,5 @@ function calculateGainsOrLoss(game, safeBet) {
 	return result;
 }
 
-module.exports = rr;
+// module.exports = rr;
+export default rr;

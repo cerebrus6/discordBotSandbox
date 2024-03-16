@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import bot from './main.js';
+// Start the Express server
+import './index_server.js';
 
 try {
   // Code that may throw an error

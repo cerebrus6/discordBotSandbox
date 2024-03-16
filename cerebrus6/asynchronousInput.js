@@ -1,4 +1,6 @@
-const readline = require('readline');
+// const readline = require('readline');
+import readline from 'readline';
+
 function input(query="") {
 	// calling input will create an instance of a stream
 	// this instance will terminate after getting the input
@@ -16,4 +18,5 @@ function input(query="") {
 	});
 }
 
-module.exports = input;
+// module.exports = input;
+export default input;

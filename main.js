@@ -35,7 +35,9 @@ class Bot extends Core {
       fantasy: fantasy,
       snack: snack,
       joke: joke,
-      help: this.help
+      help: {
+        default: this.help
+      }
     };
   }
 
@@ -44,7 +46,9 @@ class Bot extends Core {
       let guide_message = `\`\`\`Commands [Parameters]\`\`\``;
 
       for (const [command, function_obj] of Object.entries(this.modules)) {
-        const fnString = function_obj.toString();
+        // console.log(function_obj);
+        // console.log(command);
+        const fnString = function_obj.default.toString();
         const parameterNames = fnString
           .slice(fnString.indexOf('(') + 1, fnString.indexOf(')'))
           .split(', ')
@@ -52,9 +56,10 @@ class Bot extends Core {
         parameterNames ? parameterNames.shift() : [];
         guide_message += `\`\`\`!${command} [${parameterNames.join('] [')}]\`\`\``
       }
+
       guide_message += `\nTo have details of a specific command, just input \`!help [command_name]\`\n`
       guide_message += `Note: Ignore the square brackets when typing the parameters.`
-      msg.channel.send(guide_message);    
+      msg.channel.send(guide_message);
     }
   }
 
