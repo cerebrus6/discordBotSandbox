@@ -14,7 +14,6 @@
     "discord",
     "bot"
   ],
-  "type": "module",
   "author": "cerebrus6",
   "license": "ISC",
   "bugs": {
