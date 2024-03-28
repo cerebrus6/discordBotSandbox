@@ -1,5 +1,16 @@
-const Discord = require('discord.js');
-const client = new Discord.Client();
+import { Client, Intents } from "discord.js";
+import dotenv from 'dotenv'; // Import the dotenv package
+
+// Load environment variables from .env file
+dotenv.config();
+
+const client = new Client({ 
+    intents: [
+        Intents.FLAGS.GUILDS, // Required for bot to function in guilds (servers)
+        Intents.FLAGS.GUILD_MESSAGES // Required to receive messages in guilds
+    ]
+});
+
 const prefix = '!'; // Replace this with your bot's prefix
 
 // This object will store the vouch data (user IDs and vouch counts)
@@ -35,5 +46,6 @@ client.on('message', message => {
     }
 });
 
-// Replace 'YOUR_BOT_TOKEN' with your actual bot token
+// Use your bot token directly here
+console.log(process.env.CLIENT_TOKEN);
 client.login(process.env.CLIENT_TOKEN);
